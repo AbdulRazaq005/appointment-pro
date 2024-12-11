@@ -1,13 +1,28 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const featuredProfessionals = [
-  { id: '1', name: 'Dr. Jane Smith', specialty: 'General Practitioner', avatar: '/placeholder.svg?height=100&width=100' },
-  { id: '2', name: 'Dr. John Doe', specialty: 'Dentist', avatar: '/placeholder.svg?height=100&width=100' },
-  { id: '3', name: 'Dr. Emily Brown', specialty: 'Psychologist', avatar: '/placeholder.svg?height=100&width=100' },
-]
+  {
+    id: "1",
+    name: "Dr. Jane Smith",
+    specialty: "General Practitioner",
+    avatar: "/avatar.jpg",
+  },
+  {
+    id: "2",
+    name: "Dr. John Doe",
+    specialty: "Dentist",
+    avatar: "/avatar.jpg",
+  },
+  {
+    id: "3",
+    name: "Dr. Emily Brown",
+    specialty: "Psychologist",
+    avatar: "/avatar.jpg",
+  },
+];
 
 export default function Home() {
   return (
@@ -15,19 +30,24 @@ export default function Home() {
       <section className="mb-16">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-8 md:mb-0">
-            <h1 className="text-4xl font-bold mb-4">Book Your Next Appointment with Ease</h1>
-            <p className="text-xl mb-6">Connect with top professionals in various fields and schedule your appointment hassle-free.</p>
+            <h1 className="text-4xl font-bold mb-4">
+              Book Your Next Appointment with Ease
+            </h1>
+            <p className="text-xl mb-6">
+              Connect with top professionals in various fields and schedule your
+              appointment hassle-free.
+            </p>
             <Link href="/professionals">
               <Button size="lg">Find a Professional</Button>
             </Link>
           </div>
           <div className="md:w-1/2">
             <Image
-              src="/placeholder.svg?height=400&width=600"
+              src="/cover.png"
               alt="Appointment booking illustration"
               width={600}
               height={400}
-              className="rounded-lg shadow-lg"
+              className="rounded-lg"
             />
           </div>
         </div>
@@ -37,7 +57,10 @@ export default function Home() {
         <h2 className="text-3xl font-bold mb-6">Featured Professionals</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {featuredProfessionals.map((professional) => (
-            <Card key={professional.id} className="bg-white bg-opacity-80 backdrop-blur-lg">
+            <Card
+              key={professional.id}
+              className="bg-white bg-opacity-80 backdrop-blur-lg"
+            >
               <CardHeader>
                 <div className="flex items-center space-x-4">
                   <Image
@@ -48,8 +71,12 @@ export default function Home() {
                     className="rounded-full"
                   />
                   <div>
-                    <CardTitle className="text-xl font-bold text-gray-800">{professional.name}</CardTitle>
-                    <p className="text-sm text-gray-600">{professional.specialty}</p>
+                    <CardTitle className="text-xl font-bold text-gray-800">
+                      {professional.name}
+                    </CardTitle>
+                    <p className="text-sm text-gray-600">
+                      {professional.specialty}
+                    </p>
                   </div>
                 </div>
               </CardHeader>
@@ -63,6 +90,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
-
