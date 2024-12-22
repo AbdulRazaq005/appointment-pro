@@ -2,29 +2,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import db from "@/db/db";
+import { Role } from "@prisma/client";
 
-const featuredProfessionals = [
-  {
-    id: "1",
-    name: "Dr. Jane Smith",
-    specialty: "General Practitioner",
-    avatar: "/avatar.jpg",
-  },
-  {
-    id: "2",
-    name: "Dr. John Doe",
-    specialty: "Dentist",
-    avatar: "/avatar.jpg",
-  },
-  {
-    id: "3",
-    name: "Dr. Emily Brown",
-    specialty: "Psychologist",
-    avatar: "/avatar.jpg",
-  },
-];
+async function fetchFeaturedProfessionals() {
+  const res = await db.user.findMany({
+    where: {
+      role: Role.PROFESSIONAL,
+    },
+    include: {
+      profession: true,
+    },
+    take: 3,
+  });
+  return res;
+  // return [];
+}
 
-export default function Home() {
+export default async function Home() {
+  const featuredProfessionals = await fetchFeaturedProfessionals();
   return (
     <div className="container mx-auto px-4 py-8">
       <section className="mb-16">
@@ -64,7 +60,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center space-x-4">
                   <Image
-                    src={professional.avatar}
+                    src={"/avatar.jpg"}
                     alt={professional.name}
                     width={50}
                     height={50}
@@ -75,7 +71,7 @@ export default function Home() {
                       {professional.name}
                     </CardTitle>
                     <p className="text-sm text-gray-600">
-                      {professional.specialty}
+                      {/* {professional.profession?.specialisation} */}
                     </p>
                   </div>
                 </div>

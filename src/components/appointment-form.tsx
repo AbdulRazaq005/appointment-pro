@@ -1,40 +1,74 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Appointment } from './appointment-booking'
+"use client";
+
+import { useCallback, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { bookAppointment } from "@/app/book/actions";
+import {
+  AppointmentDao,
+  createAppointmentSchema,
+} from "@/types/appointmentTypes";
 
 type AppointmentFormProps = {
-  onBook: (appointment: Omit<Appointment, 'id'>) => void
-  selectedDate: Date | undefined
-  selectedTime: string | undefined
-}
+  onBook: (appointment: AppointmentDao) => void;
+  selectedDate: Date | undefined;
+  selectedSlot: string | undefined;
+  professionalId?: string | null;
+};
 
-export default function AppointmentForm({ onBook, selectedDate, selectedTime }: AppointmentFormProps) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+export default function AppointmentForm({
+  onBook,
+  selectedDate,
+  selectedSlot,
+  professionalId,
+}: AppointmentFormProps) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (selectedDate && selectedTime && name && email) {
-      onBook({ date: selectedDate, time: selectedTime, name, email })
-      setName('')
-      setEmail('')
-    }
-  }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (selectedDate && selectedSlot && name && email && professionalId) {
+        const payload = {
+          professionalId,
+          name,
+          email,
+          date: selectedDate,
+          slotId: selectedSlot,
+        };
+        const parseResult = createAppointmentSchema.safeParse(payload);
+        if (!parseResult.success) {
+          console.error(
+            "appointmentSchema validation error: ",
+            parseResult.error
+          );
+          return;
+        }
+        const actionResult = await bookAppointment(parseResult.data);
+        if (!actionResult.error && actionResult.data) {
+          onBook(actionResult.data);
+          setName("");
+          setEmail("");
+        }
+      }
+    },
+    [selectedDate, selectedSlot, name, email, professionalId, onBook]
+  );
 
   return (
     <Card className="bg-white bg-opacity-80 backdrop-blur-lg">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-gray-800">Book an Appointment</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-800">
+          Book an Appointment
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Input
               type="text"
-              placeholder="Your Name"
+              placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -44,34 +78,16 @@ export default function AppointmentForm({ onBook, selectedDate, selectedTime }: 
           <div>
             <Input
               type="email"
-              placeholder="Your Email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               className="bg-white bg-opacity-50 backdrop-blur-sm"
             />
           </div>
-          <div>
-            <Input
-              type="text"
-              value={selectedDate ? format(selectedDate, 'PPP') : ''}
-              readOnly
-              disabled
-              className="bg-white bg-opacity-50 backdrop-blur-sm"
-            />
-          </div>
-          <div>
-            <Input
-              type="text"
-              value={selectedTime || ''}
-              readOnly
-              disabled
-              className="bg-white bg-opacity-50 backdrop-blur-sm"
-            />
-          </div>
-          <Button 
-            type="submit" 
-            disabled={!selectedDate || !selectedTime}
+          <Button
+            type="submit"
+            disabled={!selectedDate || !selectedSlot}
             className="w-full bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
           >
             Book Appointment
@@ -79,6 +95,5 @@ export default function AppointmentForm({ onBook, selectedDate, selectedTime }: 
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
-
