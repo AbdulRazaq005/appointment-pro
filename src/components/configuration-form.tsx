@@ -12,15 +12,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import moment from "moment";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
 
 const DAYS_OF_WEEK = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
+  { name: "Sunday", value: 0 },
+  { name: "Monday", value: 1 },
+  { name: "Tuesday", value: 2 },
+  { name: "Wednesday", value: 3 },
+  { name: "Thursday", value: 4 },
+  { name: "Friday", value: 5 },
+  { name: "Saturday", value: 6 },
 ];
 
 interface TimeSlot {
@@ -28,14 +31,19 @@ interface TimeSlot {
   to: string;
 }
 
-export function ConfigurationForm() {
-  const [workingDays, setWorkingDays] = useState<string[]>([]);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
-    { from: "", to: "" },
-  ]);
+export function ConfigurationForm({
+  daysOfWeek,
+  slots,
+}: {
+  daysOfWeek: number[];
+  slots: TimeSlot[];
+}) {
+  const [workingDays, setWorkingDays] = useState<number[]>(daysOfWeek);
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>(slots);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleDayToggle = (day: string) => {
+  const handleDayToggle = (day: number) => {
     setWorkingDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
@@ -67,18 +75,36 @@ export function ConfigurationForm() {
 
     const configData = {
       workingDays,
-      timeSlots,
+      timeSlots: timeSlots.map((slot) => ({
+        from: moment(slot.from, "HH:mm").toDate(),
+        to: moment(slot.to, "HH:mm").toDate(),
+      })),
     };
+    if (configData.workingDays.length === 0) {
+      alert("Please select at least one day of the week");
+      setIsLoading(false);
+      return;
+    }
+    if (configData.timeSlots.length === 0) {
+      alert("Please select at least one time slot");
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      // Here you would typically send the data to your API
-      console.log("Professional configuration data:", configData);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // alert("Configuration saved successfully!");
+      // console.log("Professional configuration data:", configData);
+      axios.post("/api/configuration", {
+        daysOfWeek: configData.workingDays,
+        timeSlots: configData.timeSlots,
+      });
+      toast({
+        variant: "default",
+        title: "Saved!",
+        description: "Configurations have been saved successfully.",
+      });
     } catch (error) {
       console.error("Configuration save error:", error);
-      // alert("Failed to save configuration. Please try again.");
+      alert("Failed to save configuration. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +113,9 @@ export function ConfigurationForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Set Your Working Schedule</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-800">
+          Set Your Appointment Schedule
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
@@ -96,14 +124,14 @@ export function ConfigurationForm() {
               <h3 className="text-lg font-medium">Working Days</h3>
               <div className="mt-2 space-y-2">
                 {DAYS_OF_WEEK.map((day) => (
-                  <div key={day} className="flex items-center">
+                  <div key={day.value} className="flex items-center">
                     <Checkbox
-                      id={day}
-                      checked={workingDays.includes(day)}
-                      onCheckedChange={() => handleDayToggle(day)}
+                      id={day.name}
+                      checked={workingDays.includes(day.value)}
+                      onCheckedChange={() => handleDayToggle(day.value)}
                     />
-                    <Label htmlFor={day} className="ml-2">
-                      {day}
+                    <Label htmlFor={day.name} className="ml-2 text-lg">
+                      {day.name}
                     </Label>
                   </div>
                 ))}
@@ -130,24 +158,31 @@ export function ConfigurationForm() {
                     }
                     required
                   />
-                  {index > 0 && (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => removeTimeSlot(index)}
-                    >
-                      Remove
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => removeTimeSlot(index)}
+                  >
+                    Remove
+                  </Button>
                 </div>
               ))}
-              <Button type="button" variant="outline" onClick={addTimeSlot}>
+              <Button
+                className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300 hover:text-gray-900"
+                type="button"
+                onClick={addTimeSlot}
+              >
                 Add Time Slot
               </Button>
             </div>
           </div>
           <CardFooter className="px-0 pt-6">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+              variant="default"
+            >
               {isLoading ? "Saving..." : "Save Configuration"}
             </Button>
           </CardFooter>

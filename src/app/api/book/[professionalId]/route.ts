@@ -1,13 +1,16 @@
-import db from "@/db/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
+import { bookAppointment } from "@/services/appointmentService";
+import { CreateAppointmentDto } from "@/types/appointmentTypes";
 
-export async function GET(
+export async function POST(
   req: NextRequest,
   { params: params }: { params: { professionalId: string | undefined } }
 ) {
   const { professionalId } = await params;
+  const data: CreateAppointmentDto = await req.json();
+
   const session = await getServerSession(authOptions);
   if (!session?.user || !professionalId) {
     return NextResponse.json(
@@ -15,19 +18,7 @@ export async function GET(
       { status: 200 }
     );
   }
-  const appointments = await db.appointment.findMany({
-    where: { professionalId: professionalId, userId: session.user.id },
+  const result = await bookAppointment(data);
 
-    select: {
-      id: true,
-      date: true,
-      slotId: true,
-      slot: true,
-      name: true,
-      email: true,
-      professionalId: true,
-    },
-  });
-
-  return NextResponse.json({ data: appointments });
+  return NextResponse.json(result);
 }

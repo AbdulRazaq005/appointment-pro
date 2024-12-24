@@ -1,28 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import db from "@/db/db";
-import { Role } from "@prisma/client";
+import { Professional } from "@/types/userTypes";
 import Link from "next/link";
 
-async function fetchProfessionalDetails(id: string) {
-  const res = await db.user.findUnique({
-    where: {
-      id: id,
-      role: Role.PROFESSIONAL,
-    },
-    include: {
-      profession: true,
-    },
-  });
-  return res;
-}
-
 export default async function AppointmentDetails({
-  professionalId,
+  professional,
 }: {
-  professionalId?: string;
+  professional: Professional | null;
 }) {
-  const professional = await fetchProfessionalDetails(professionalId ?? "");
-
   return (
     <Card className="bg-white bg-opacity-80 backdrop-blur-lg mb-6">
       <CardHeader>

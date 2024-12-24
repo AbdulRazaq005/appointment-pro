@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import db from "@/db/db";
 import { Role } from "@prisma/client";
 
@@ -13,10 +13,9 @@ async function fetchFeaturedProfessionals() {
     include: {
       profession: true,
     },
-    take: 3,
+    take: 10,
   });
   return res;
-  // return [];
 }
 
 export default async function Home() {
@@ -70,17 +69,16 @@ export default async function Home() {
                     <CardTitle className="text-xl font-bold text-gray-800">
                       {professional.name}
                     </CardTitle>
-                    <p className="text-sm text-gray-600">
-                      {/* {professional.profession?.specialisation} */}
+                    <p className="text-sm text-gray-900">
+                      {professional.profession?.specialisation}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {professional.profession?.city},{" "}
+                      {professional.profession?.state}
                     </p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <Link href={`/book?professional=${professional.id}`}>
-                  <Button className="w-full">Book Appointment</Button>
-                </Link>
-              </CardContent>
             </Card>
           ))}
         </div>

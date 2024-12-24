@@ -4,15 +4,17 @@ const db = new PrismaClient();
 
 async function main() {
   // cleanup data
-  await db.user.deleteMany({});
   await db.profession.deleteMany({});
+  await db.user.deleteMany({});
   await db.slot.deleteMany({});
 
   // USERS
+  const userIds: string[] = [];
   try {
     USERS.forEach(async (user) => {
       await db.user.create({
         data: {
+          id: user.id,
           name: user.name,
           role: user.role,
           email: user.email,
@@ -29,51 +31,60 @@ async function main() {
           },
         },
       });
-    });
-  } catch (error) {
-    console.error(`SLOTS Seed Error: ${error}`);
-  }
-
-  // SLOTS
-  try {
-    await db.slot.createMany({
-      data: [
-        {
-          id: "0ab04570-ec0b-4b23-a586-9b47ba1e53e8",
-          from: new Date(Date.UTC(2000, 0, 1, 10, 0, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 10, 20, 0)),
-        },
-        {
-          id: "08e26b59-e07a-487a-8d0c-fe398272b20b",
-          from: new Date(Date.UTC(2000, 0, 1, 10, 20, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 10, 40, 0)),
-        },
-        {
-          id: "b9d9dc57-d239-4d1e-bc87-2e8118d3485f",
-          from: new Date(Date.UTC(2000, 0, 1, 10, 40, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 11, 0, 0)),
-        },
-        {
-          id: "341ebde8-c55b-4532-add8-21505c46c2a7",
-          from: new Date(Date.UTC(2000, 0, 1, 11, 0, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 11, 20, 0)),
-        },
-        {
-          id: "08559b17-51e2-4dd0-8cf7-ac893c40b6b2",
-          from: new Date(Date.UTC(2000, 0, 1, 11, 20, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 11, 40, 0)),
-        },
-        {
-          id: "bd6ac5d4-c3e5-493c-b74c-4e3346fbbfa7",
-          from: new Date(Date.UTC(2000, 0, 1, 11, 40, 0)),
-          to: new Date(Date.UTC(2000, 0, 1, 12, 0, 0)),
-        },
-      ],
+      console.log("Seeded user: ", user.id);
+      userIds.push(user.id);
+      await seedDefaultSlots(user.id);
+      console.log("seeded slots for: ", user.id);
     });
   } catch (error) {
     console.error(`SLOTS Seed Error: ${error}`);
   }
 }
+
+export async function seedDefaultSlots(userId: string) {
+  try {
+    await db.slot.createMany({
+      data: [
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 4, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 5, 30, 0)),
+          userId,
+        },
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 5, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 6, 30, 0)),
+          userId,
+        },
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 6, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 7, 30, 0)),
+          userId,
+        },
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 8, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 9, 30, 0)),
+          userId,
+        },
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 9, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 10, 30, 0)),
+          userId,
+        },
+        {
+          from: new Date(Date.UTC(2000, 0, 1, 10, 30, 0)),
+          to: new Date(Date.UTC(2000, 0, 1, 11, 30, 0)),
+          userId,
+        },
+      ],
+    });
+  } catch (error) {
+    console.error(`SLOTS Seed Error: ${error}`);
+    return false;
+  }
+
+  return true;
+}
+
 main()
   .then(async () => {
     await db.$disconnect();

@@ -48,6 +48,7 @@ model Profession {
   licenseNumber  String
   phoneNo        String
   fee            Int
+  workingDays    String @default("1111111")
   city           String
   state          String
 }
@@ -56,7 +57,9 @@ model Slot {
   id          String        @id @unique @default(uuid())
   from        DateTime      @db.Time()
   to          DateTime      @db.Time()
+  userId      String
   appointment Appointment[]
+  isActive    Boolean       @default(true)
 }
 
 model Appointment {
@@ -69,7 +72,7 @@ model Appointment {
   email          String
   date           DateTime
   slotId         String
-  slot           Slot     @relation(fields: [slotId], references: [id])
+  slot           Slot     @relation(fields: [slotId], references: [id], onDelete: Restrict)
   createdAt      DateTime @default(now())
 }
 

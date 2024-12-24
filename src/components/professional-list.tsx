@@ -144,10 +144,10 @@ export default function ProfessionalList({
                   <CardTitle className="text-xl font-bold text-gray-800">
                     {professional.name}
                   </CardTitle>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-900">
                     {professional.profession?.specialisation}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-500">
                     {professional.profession?.city},{" "}
                     {professional.profession?.state}
                   </p>
@@ -159,7 +159,7 @@ export default function ProfessionalList({
                 onClick={() => setSelectedProfessional(professional)}
                 className="w-full bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
               >
-                Select
+                Book Appointment
               </Button>
             </CardContent>
           </Card>

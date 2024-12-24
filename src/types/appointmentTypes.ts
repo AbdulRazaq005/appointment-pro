@@ -19,5 +19,14 @@ export const appointmentDaoSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
+  professional: z
+    .object({
+      name: z.string().nonempty(),
+      specialisation: z.string().nonempty(),
+      city: z.string().nonempty(),
+      state: z.string().nonempty(),
+      fee: z.number(),
+    })
+    .optional(),
 });
 export type AppointmentDao = z.infer<typeof appointmentDaoSchema>;

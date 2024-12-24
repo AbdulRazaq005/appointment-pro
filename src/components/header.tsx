@@ -129,6 +129,14 @@ function MenuItems(role: string) {
       <Link href="/" className="block text-gray-600 hover:text-blue-500">
         Home
       </Link>
+      {role === Role.USER && (
+        <Link
+          href="/professionals"
+          className="block text-gray-600 hover:text-blue-500"
+        >
+          Professionals
+        </Link>
+      )}
       <Link href="/book" className="block text-gray-600 hover:text-blue-500">
         Book Appointment
       </Link>

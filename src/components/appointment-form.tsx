@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { bookAppointment } from "@/app/book/actions";
 import {
   AppointmentDao,
   createAppointmentSchema,
 } from "@/types/appointmentTypes";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 type AppointmentFormProps = {
   onBook: (appointment: AppointmentDao) => void;
@@ -25,36 +26,81 @@ export default function AppointmentForm({
 }: AppointmentFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const { toast } = useToast();
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (selectedDate && selectedSlot && name && email && professionalId) {
-        const payload = {
-          professionalId,
-          name,
-          email,
-          date: selectedDate,
-          slotId: selectedSlot,
-        };
-        const parseResult = createAppointmentSchema.safeParse(payload);
-        if (!parseResult.success) {
-          console.error(
-            "appointmentSchema validation error: ",
-            parseResult.error
-          );
-          return;
-        }
-        const actionResult = await bookAppointment(parseResult.data);
-        if (!actionResult.error && actionResult.data) {
-          onBook(actionResult.data);
-          setName("");
-          setEmail("");
-        }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedDate && selectedSlot && name && email && professionalId) {
+      const payload = {
+        professionalId,
+        name,
+        email,
+        date: selectedDate,
+        slotId: selectedSlot,
+      };
+      const parseResult = createAppointmentSchema.safeParse(payload);
+      if (!parseResult.success) {
+        console.error(
+          "appointmentSchema validation error: ",
+          parseResult.error
+        );
+        return;
       }
-    },
-    [selectedDate, selectedSlot, name, email, professionalId, onBook]
-  );
+      const result = await axios.post(
+        "/api/book/" + professionalId,
+        parseResult.data
+      );
+      if (result.data.error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.data.error,
+        });
+        return;
+      }
+      onBook(result.data.data);
+      setName("");
+      setEmail("");
+      toast({
+        title: "Booked!",
+        description: "Your appointment has been booked successfully.",
+      });
+    }
+  };
+
+  // const handleSubmit = useCallback(
+  //   async (e: React.FormEvent) => {
+  //     e.preventDefault();
+  //     if (selectedDate && selectedSlot && name && email && professionalId) {
+  //       const payload = {
+  //         professionalId,
+  //         name,
+  //         email,
+  //         date: selectedDate,
+  //         slotId: selectedSlot,
+  //       };
+  //       const parseResult = createAppointmentSchema.safeParse(payload);
+  //       if (!parseResult.success) {
+  //         console.error(
+  //           "appointmentSchema validation error: ",
+  //           parseResult.error
+  //         );
+  //         return;
+  //       }
+  //       const actionResult = await bookAppointment(parseResult.data);
+  //       if (!actionResult.error && actionResult.data) {
+  //         onBook(actionResult.data);
+  //         setName("");
+  //         setEmail("");
+  //         toast({
+  //           title: "Booked!",
+  //           description: "Your appointment has been booked successfully.",
+  //         });
+  //       }
+  //     }
+  //   },
+  //   [selectedDate, selectedSlot, name, email, professionalId, onBook]
+  // );
 
   return (
     <Card className="bg-white bg-opacity-80 backdrop-blur-lg">
