@@ -1,4 +1,3 @@
-import { User as DbUser } from "./../../../../../node_modules/.prisma/client/index.d";
 import db from "@/db/db";
 import type { Session, SessionStrategy } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -8,6 +7,7 @@ import { JWT } from "next-auth/jwt";
 import type { User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import bcrypt from "bcrypt";
+import { User as DbUser } from "@prisma/client";
 
 const authOptions = {
   adapter: PrismaAdapter(db),
