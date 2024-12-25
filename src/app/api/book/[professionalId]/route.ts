@@ -6,9 +6,10 @@ import { CreateAppointmentDto } from "@/types/appointmentTypes";
 
 export async function POST(
   req: NextRequest,
-  { params: params }: { params: { professionalId: string | undefined } }
+  { params }: { params: Promise<{ professionalId: string | undefined }> }
 ) {
-  const { professionalId } = await params;
+  const professionalId = (await params).professionalId;
+  // const professionalId = req.nextUrl.searchParams.get('professionalId')
   const data: CreateAppointmentDto = await req.json();
 
   const session = await getServerSession(authOptions);

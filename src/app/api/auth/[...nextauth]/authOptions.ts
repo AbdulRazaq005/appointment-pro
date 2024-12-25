@@ -72,14 +72,11 @@ const authOptions = {
         delete data.user.updatedAt;
         delete data.user.emailVerified;
       }
-      console.log("Jwt user: ", data);
-      // console.log("Jwt data: ", data);
       return { ...token, ...data };
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       const user = token.user as DbUser | null;
       const data = JSON.parse(JSON.stringify({ user: user }));
-      // console.log("Session data: ", data);
       return { ...session, ...data };
     },
   },

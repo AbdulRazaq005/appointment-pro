@@ -12,7 +12,7 @@ export default function Unauthorized() {
               Unauthorized
             </h5>
             <p className="font-semibold md:text-2xl mb-8">
-              You are not authorized to access this page
+              You are not authorized to access this page. Please login.
             </p>
             <Link
               href="/"

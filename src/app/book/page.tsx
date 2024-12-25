@@ -11,7 +11,7 @@ import { AppointmentDao } from "@/types/appointmentTypes";
 export default async function BookingPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | null };
+  searchParams: Promise<{ professional: string | undefined }>;
 }) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;

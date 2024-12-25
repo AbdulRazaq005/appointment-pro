@@ -21,9 +21,6 @@ export async function getAppointments(
   }
   const data = await db.appointment.findMany({
     where: filters,
-    // include: {
-    //   slot: true,
-    // },
     orderBy: {
       date: "desc",
     },
@@ -82,7 +79,6 @@ export async function bookAppointment(
     return { error: "Unauthorized", data: null };
   }
   const userId = session.user.id;
-  console.log("userId: ", userId);
   const appointment = await db.appointment.create({
     data: {
       professionalId: data.professionalId,

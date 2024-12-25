@@ -7,7 +7,6 @@ export default withAuth(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function middleware(request: any) {
     const role = request?.nextauth?.token?.user?.role;
-    console.log("-----Middleware role: ", role);
 
     if (!role) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));

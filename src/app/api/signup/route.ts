@@ -7,7 +7,6 @@ import { Role } from "@prisma/client";
 export async function POST(req: NextRequest) {
   const body: SignUpDto = await req.json();
   const { name, email, password } = body;
-  console.log(name, email, password);
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.user.create({
     data: {

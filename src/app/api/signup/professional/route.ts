@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  // console.log(body);
   const hashedPassword = await bcrypt.hash(parseResult.data.password, 10);
   await db.user.create({
     data: {

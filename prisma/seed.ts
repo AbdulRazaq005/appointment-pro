@@ -31,10 +31,8 @@ async function main() {
           },
         },
       });
-      console.log("Seeded user: ", user.id);
       userIds.push(user.id);
       await seedDefaultSlots(user.id);
-      console.log("seeded slots for: ", user.id);
     });
   } catch (error) {
     console.error(`SLOTS Seed Error: ${error}`);

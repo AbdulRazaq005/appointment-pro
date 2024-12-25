@@ -12,8 +12,6 @@ export function BookedAppointments({
   appointments: AppointmentDao[];
   role: Role;
 }) {
-  // console.log("My Appointments: ", appointments);
-
   return (
     <div className="space-y-4">
       {appointments.length === 0 && (

@@ -92,7 +92,6 @@ export function ConfigurationForm({
     }
 
     try {
-      // console.log("Professional configuration data:", configData);
       axios.post("/api/configuration", {
         daysOfWeek: configData.workingDays,
         timeSlots: configData.timeSlots,
