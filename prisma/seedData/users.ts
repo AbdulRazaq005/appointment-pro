@@ -12,7 +12,7 @@ const USERS = [
     profession: {
       specialisation: "Lawyer",
       city: "Albuquerque",
-      state: "New York",
+      state: "New Mexico",
       fee: 200,
       licenseNumber: "123456789",
       phoneNo: "1234567890",

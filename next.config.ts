@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  pageExtensions: ["ts", "tsx", "md"],
 };
 
 export default nextConfig;
