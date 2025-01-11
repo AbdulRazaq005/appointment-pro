@@ -10,6 +10,7 @@ export const createAppointmentSchema = z.object({
 export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
 
 export const appointmentDaoSchema = z.object({
+  userId: z.string().nonempty(),
   professionalId: z.string().nonempty(),
   name: z.string().nonempty(),
   email: z.string().nonempty(),

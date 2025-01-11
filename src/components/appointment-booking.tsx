@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,14 @@ import { displayTimeSlot } from "@/utils/displayUtils";
 import { getDisabledDays } from "@/utils/configurationUtils";
 
 export default function AppointmentBooking({
+  userId,
   professionalId,
   timeSlots,
   workingDays,
   bookedAppointments,
 }: {
   professionalId?: string | null;
+  userId?: string | null;
   timeSlots: Slot[];
   workingDays: number[];
   bookedAppointments: AppointmentDao[];
@@ -29,6 +31,7 @@ export default function AppointmentBooking({
   );
   const [appointments, setAppointments] =
     useState<AppointmentDao[]>(bookedAppointments);
+  const [bookedSlotIds, setBookedSlotIds] = useState<string[]>([]);
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     setDate(selectedDate);
@@ -38,6 +41,28 @@ export default function AppointmentBooking({
   const handleAppointmentBook = (appointment: AppointmentDao) => {
     setAppointments([...appointments, appointment]);
   };
+
+  useEffect(() => {
+    if (userId) {
+      setAppointments(
+        bookedAppointments.filter(
+          (appointment) => appointment.userId === userId
+        )
+      );
+    }
+  }, [bookedAppointments, userId]);
+
+  useEffect(() => {
+    if (date) {
+      setBookedSlotIds(
+        bookedAppointments
+          .filter((appointment) =>
+            moment(date).isSame(moment(appointment.date))
+          )
+          .map((appointment) => appointment.slotId)
+      );
+    }
+  }, [date, bookedAppointments]);
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -74,6 +99,7 @@ export default function AppointmentBooking({
                   {timeSlots.map((slot) => (
                     <Button
                       key={slot.id}
+                      disabled={bookedSlotIds.includes(slot.id)}
                       variant={selectedSlot === slot.id ? "default" : "outline"}
                       onClick={() => setSelectedSlot(slot.id)}
                       className="w-full"

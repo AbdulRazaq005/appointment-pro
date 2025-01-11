@@ -29,12 +29,7 @@ export default async function BookingPage({
     workingDays = binaryToWorkingDays(
       professionalDetails?.profession?.workingDays
     );
-    if (userId) {
-      bookedAppointments = await fetchBookedAppointments(
-        professionalId,
-        userId
-      );
-    }
+    bookedAppointments = await fetchBookedAppointments(professionalId);
   }
   return (
     <div className="container mx-auto p-4 pt-8">
@@ -43,6 +38,7 @@ export default async function BookingPage({
       </h1>
       <AppointmentDetails professional={professionalDetails} />
       <AppointmentBooking
+        userId={userId}
         professionalId={professionalId}
         timeSlots={timeSlots}
         workingDays={workingDays}
@@ -75,10 +71,10 @@ async function fetchProfessionalDetails(
   });
   return res;
 }
-async function fetchBookedAppointments(professionalId: string, userId: string) {
+async function fetchBookedAppointments(professionalId: string) {
   const res = await db.appointment.findMany({
     where: {
-      userId: userId,
+      // userId: userId,
       professionalId: professionalId,
     },
     include: {
