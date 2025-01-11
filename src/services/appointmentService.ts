@@ -25,6 +25,7 @@ export async function getAppointments(
       date: "desc",
     },
     select: {
+      userId: true,
       professionalId: true,
       name: true,
       email: true,
@@ -95,6 +96,7 @@ export async function bookAppointment(
       name: true,
       email: true,
       professionalId: true,
+      userId: true,
       slot: true,
     },
   });
