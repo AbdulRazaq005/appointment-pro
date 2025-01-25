@@ -1,3 +1,14 @@
+# AppointmentPro
+## 🗓️ Appointment Booking Platform
+A versatile and user-friendly appointment booking system that allows users to schedule appointments with professionals across various industries, including doctors, lawyers, accountants, and more. 
+<br/>
+Live app hosted on Vercel : https://appointment-pro.vercel.app/
+<br/>
+
+## 🛠️ Tech Stack
+Typescript, Next.js, React.js, PostgreSQL, PrismaORM, NextAuth
+<br/>
+
 ## Project Setup
 
 ### Database
